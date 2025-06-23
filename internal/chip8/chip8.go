@@ -2,6 +2,7 @@ package chip8
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 )
 
@@ -23,6 +24,7 @@ func NewChip8() *Chip8 {
 	c := &Chip8{}
 	c.PC = ProgramStart
 	for i := 0; i < len(fontset); i++ {
+		fmt.Println(0x50+i)
 		c.Memory[0x50+i] = fontset[i]
 	}
 	return c
@@ -40,6 +42,7 @@ func (c *Chip8) LoadROM(path string) error {
 }
 
 func (c *Chip8) Cycle() {
+	slog.Info("PC value in cycle", "PC", c.PC)
 	opcode := uint16(c.Memory[c.PC])<<8 | uint16(c.Memory[c.PC+1])
 	c.PC += 2
 
@@ -77,9 +80,21 @@ func (c *Chip8) Cycle() {
 
 	case 0xD000:
 		// DXYN: draw sprite
+
+		// example of maksing and right bit shift operation
+		//   1101 0001 0010 0101
+		// & 0000 0000 1111 0000
+  		// -------------------
+  		// - 0000 0000 0010 0000
+		// then shift by 4 
+		//   0000 0000 0010 0000 >> 4 = 0000 0000 0000 0010 = 2
+
+
 		x := c.V[(opcode&0x0F00)>>8]
 		y := c.V[(opcode&0x00F0)>>4]
 		height := opcode & 0x000F
+		
+		slog.Default().Info("Draw sprite", "x", x, "y", y, "height", height)
 
 		c.V[0xF] = 0 // VF = 0 (collision flag)
 		for row := uint16(0); row < height; row++ {

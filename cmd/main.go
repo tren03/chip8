@@ -6,7 +6,6 @@ import (
 
 	"github.com/gen2brain/raylib-go/raylib"
 	"github.com/tren03/chip8/internal/chip8"
-	"github.com/tren03/chip8/tests"
 )
 
 const (
@@ -16,10 +15,10 @@ const (
 )
 
 func main() {
-	tests.TestGen()
+	// tests.TestGen()
 
 	c := chip8.NewChip8()
-	if err := c.LoadROM("roms/test.ch8"); err != nil {
+	if err := c.LoadROM("roms/3-test-opcode.ch8"); err != nil {
 		log.Fatal(err)
 	}
 
